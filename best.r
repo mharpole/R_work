@@ -2,22 +2,14 @@
 ## rates of either heart attack. heart failure, or pneumonia.
 ## coumn 2 contains hospital names
 ## column 7 contains state names
-## column 11 or 15 contain mortalilty informtaion on heart attacks
-## columns 17 or 21 contain mortality information on heat failure
-## columns 23 or 27 contain mortality information on pneumonia
+## column 11  contain mortalilty informtaion on heart attacks
+## columns 17 contain mortality information on heat failure
+## columns 23 contain mortality information on pneumonia
 best <- function(state, outcome){
-	# format outcome vector to parse later in the code
-	 outcome <- tolower(outcome)
-	 outcomes<- vector(length = 3)
-	 names(outcomes)<-c("heart attack", "heart failure","pneumonia")
-	 outcomes["heart attack"]<-"Hospital.30.Day.Death..Mortality..Rates.from.Heart.Attack"
-	 outcomes["heart failure"]<- "Hospital.30.Day.Death..Mortality..Rates.from.Heart.Failure"
-	 outcomes["pneumonia"]<- "Hospital.30.Day.Death..Mortality..Rates.from.Pneumonia"
-	 state <- toupper(state)
-	  
 ## Read outcome data
-	data <-read.csv("outcome-of-care-measures.csv",numerals = "no.loss",na.strings = "Not Avaliable")
-
+	data <-read.csv("outcome-of-care-measures.csv",na.strings = "Not Avaliable")
+  outcomes <- c("heart attack", "heart failure","pneumonia")
+  #print(outcomes)
 ## check that state and outcome are valid
 	states <- levels(data[,7])
 	#return(states)
@@ -27,14 +19,47 @@ best <- function(state, outcome){
 	stop("invalid state")
 	}
 	
-	if(!(outcome %in% names(outcomes))){
+	if(!(outcome %in% outcomes)){
 	
 	stop("invalid outcome")
 	}
+	if(outcome == "heart attack"){
+	  out <- "Hospital.30.Day.Death..Mortality..Rates.from.Heart.Attack"
+	}
+	if(outcome == "heart failure"){
+	  out <- "Hospital.30.Day.Death..Mortality..Rates.from.Heart.Failure"
+	}
+	if(outcome == "pneumonia"){
+	  out <- "Hospital.30.Day.Death..Mortality..Rates.from.Pneumonia"
+	}
 	# truncate data to only state of intrest and outcom of interest
-  data <- data[grep(state,data$State),]
-  data <- data[complete.cases(data[outcomes[outcome]]),]
-  data <- data[order(data[,outcomes[outcome]]),]
+  data <- filter(data, State==state)
+  #print(head(data$State))
+  data <- data[which(complete.cases(data[out])),]
+  #print(head (data[17]))
+  #rint(tail(data$State))
+  #data <- arrange(data,outcome,Hospital.Name)
 	#print(head(data))
-	return(as.character(data$Hospital.Name[1]))
+	if(outcome == "heart attack"){
+	  data <- suppressWarnings(arrange(data,
+	                          as.numeric(
+	                          as.character(Hospital.30.Day.Death..Mortality..Rates.from.Heart.Attack)), 
+	                          as.character(Hospital.Name)))
+	}
+	if(outcome == "heart failure"){
+	  data <- suppressWarnings(arrange(data,
+	                           as.numeric(
+	                           as.character(Hospital.30.Day.Death..Mortality..Rates.from.Heart.Failure)),
+	                           as.character(Hospital.Name)))
+	  #print(head(data$State))
+	  #print(head(data$Hospital.Names))
+	}
+	if(outcome == "pneumonia"){
+	  data <- suppressWarnings(arrange(data,
+	                           as.numeric(
+	                           as.character(Hospital.30.Day.Death..Mortality..Rates.from.Pneumonia)),
+	                           as.character(Hospital.Name)))
+	}
+  #print(head(data$Hospital.Name))
+  as.character(data$Hospital.Name[1])
 }
