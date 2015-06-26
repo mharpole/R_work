@@ -6,18 +6,14 @@
 ## columns 17 contain mortality information on heat failure
 ## columns 23 contain mortality information on pneumonia
 rankhospital <- function(state, outcome, num = "best"){
-  print(class(num))
-  print(num)
-  if(num=="worst"){print("yes")}
   ## Read outcome data
-  data <-read.csv("outcome-of-care-measures.csv",na.strings = "Not Avaliable")
+  data <-read.csv("outcome-of-care-measures.csv", na.strings = "Not Available",colClasses = "character")
   outcomes <- c("heart attack", "heart failure","pneumonia")
   #print(outcomes)
   ## check that state and outcome are valid
-  states <- levels(data[,7])
-  #return(states)
+    #return(states)
   #return(outcomes)
-  if(!(state %in% states)){
+  if(!(state %in% data$State)){
     
     stop("invalid state")
   }
@@ -64,13 +60,14 @@ rankhospital <- function(state, outcome, num = "best"){
                                      as.character(Hospital.Name)))
   }
   #print(head(data$Hospital.Name))
-  if(num=="best"){
-    return(as.character(data$Hospital.Name[1]))
-  }
+  #print(tail(data[out]))
   if(num=="worst"){
-    return(as.character(data$Hospital.Name[length(data$hospital.Name)]))
+    #print("In the worst logic expression")
+    return(data$Hospital.Name[length(data$Hospital.Name)])
   }
-  if (class(num)=="numeric"){
-    as.character(data$Hospital.Name[num])
+  if(num == "best"){
+    num<-as.numeric(1)
   }
- }
+  #print(tail(data$Hospital.Name))
+  as.character(data$Hospital.Name[num])
+}

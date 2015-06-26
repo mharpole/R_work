@@ -7,7 +7,7 @@
 ## columns 23 contain mortality information on pneumonia
 best <- function(state, outcome){
 ## Read outcome data
-	data <-read.csv("outcome-of-care-measures.csv",na.strings = "Not Avaliable")
+	data <-read.csv("outcome-of-care-measures.csv", na.strings = "Not Available")
   outcomes <- c("heart attack", "heart failure","pneumonia")
   #print(outcomes)
 ## check that state and outcome are valid
@@ -61,5 +61,6 @@ best <- function(state, outcome){
 	                           as.character(Hospital.Name)))
 	}
   #print(head(data$Hospital.Name))
-  as.character(data$Hospital.Name[1])
+  print(data[out])
+  #as.character(data$Hospital.Name[1])
 }
